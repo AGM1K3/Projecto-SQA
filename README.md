@@ -1,69 +1,120 @@
 
 # Sistema de Autenticación de Dos Factores (2FA)
 
-### Proyecto de Aseguramiento de la Calidad de Software (SQA) — UACM
+<p align="center">
+  <strong>Proyecto de Aseguramiento de la Calidad de Software (SQA)</strong><br>
+  Universidad Autónoma de la Ciudad de México — Plantel Cuautepec
+</p>
 
 ---
 
 ## Descripción del proyecto
 
-El presente proyecto consiste en el desarrollo de un **Sistema de Autenticación de Dos Factores (2FA)**, cuyo objetivo es reforzar la seguridad durante el proceso de inicio de sesión mediante dos etapas de verificación.
+El proyecto consiste en el desarrollo de un **Sistema de Autenticación de Dos Factores (2FA)**, cuyo propósito es fortalecer la seguridad del proceso de inicio de sesión mediante dos etapas de verificación.
 
-El sistema permite autenticar a un usuario mediante sus credenciales y posteriormente validar un código de verificación de seis dígitos como segundo factor de autenticación.
+En la primera etapa, el usuario proporciona su identificador y contraseña. Una vez que las credenciales son validadas correctamente, el sistema solicita un segundo factor de autenticación mediante un código temporal de seis dígitos asociado al correo electrónico registrado.
 
-El proyecto contempla el desarrollo del software, la documentación y la aplicación de pruebas para verificar el correcto funcionamiento de sus funcionalidades.
+El acceso al área protegida se concede únicamente cuando el código ingresado es correcto, se encuentra vigente, no ha sido utilizado y corresponde al intento de autenticación activo.
 
-## Objetivo
+El proyecto contempla el análisis de requerimientos, diseño del sistema, implementación, documentación y pruebas de software.
 
-Implementar y evaluar un sistema de autenticación de dos factores que permita fortalecer el proceso de acceso, validar las credenciales del usuario y verificar códigos temporales, considerando diferentes escenarios de éxito y error.
+## Objetivo general
 
-## ⚙️ Tecnologías utilizadas
+Desarrollar un sistema de autenticación de dos factores que permita reforzar la seguridad del acceso de los usuarios, aplicando mecanismos de validación de credenciales y códigos temporales, así como técnicas de aseguramiento de la calidad mediante pruebas automatizadas.
 
-| Tecnología | Aplicación |
+## ⚙️ Tecnologías y herramientas
+
+| Tecnología / Herramienta | Uso |
 |---|---|
-| Java 21 | Lenguaje de programación |
-| Apache Maven | Gestión y construcción del proyecto |
-| JUnit 5 | Pruebas unitarias |
-| Mockito | Simulación de dependencias |
-| Selenium WebDriver 4 | Pruebas funcionales de interfaz |
-| Google Chrome | Navegador para pruebas |
-| SHA-256 | Hash de contraseñas |
+| Java 21 | Desarrollo del sistema |
+| Apache Maven | Administración y construcción del proyecto |
+| JUnit 5 | Ejecución de pruebas unitarias |
+| Mockito 5 | Simulación de dependencias en pruebas |
+| Selenium WebDriver 4 | Automatización de pruebas funcionales |
+| Google Chrome | Navegador para pruebas funcionales |
+| SHA-256 | Generación del hash de contraseñas |
+| Git / GitHub | Control de versiones y almacenamiento del proyecto |
 
-## Funcionalidades principales
+## Funcionalidades del sistema
 
-- Inicio de sesión mediante identificador y contraseña.
+- Autenticación mediante identificador y contraseña.
 - Validación de credenciales del usuario.
-- Generación de códigos de verificación de seis dígitos.
+- Generación de códigos OTP de seis dígitos.
+- Envío del código mediante el servicio de correo definido por el sistema.
 - Validación del segundo factor de autenticación.
 - Vigencia del código de verificación de cinco minutos.
-- Control de intentos de validación.
+- Control de un máximo de tres intentos de validación.
 - Rechazo de códigos incorrectos, expirados o reutilizados.
-- Acceso al área protegida cuando la autenticación es exitosa.
+- Reenvío del código de verificación.
+- Acceso al área protegida después de completar correctamente los dos factores.
 
-## Pruebas de software
+## Arquitectura del sistema
 
-El proyecto incorpora pruebas unitarias y funcionales para comprobar el comportamiento de los principales componentes del sistema.
+El sistema utiliza una organización basada en el patrón **Modelo-Vista-Controlador (MVC)**, complementada con una capa de servicios y una capa de acceso a datos (DAO).
+
+### Componentes principales
+
+| Componente | Responsabilidad |
+|---|---|
+| Controller | Gestiona las solicitudes de autenticación y verificación 2FA. |
+| Model | Representa los usuarios, códigos de verificación y resultados de validación. |
+| Service | Contiene la lógica de autenticación y segundo factor. |
+| DAO | Gestiona el acceso y almacenamiento de usuarios y códigos. |
+| Web | Implementa el servidor web y las páginas de interacción. |
+
+### Clases principales
+
+- `AuthController`
+- `TwoFactorController`
+- `ServicioAutenticacion`
+- `ServicioSegundoFactor`
+- `ServicioCorreo`
+- `Usuario`
+- `CodigoVerificacion`
+- `ResultadoValidacion`
+- `UsuarioDAO`
+- `CodigoVerificacionDAO`
+
+## Aseguramiento de la calidad del software
+
+El proyecto incorpora pruebas automatizadas para verificar el funcionamiento de los componentes y el flujo de autenticación.
 
 ### Pruebas unitarias
 
-Se utiliza JUnit 5 junto con Mockito para evaluar los servicios de autenticación y segundo factor.
+Se utiliza **JUnit 5 y Mockito** para comprobar el comportamiento de los servicios principales.
 
-**Clases de prueba:**
+Clases de prueba:
+
 - `ServicioAutenticacionTest`
 - `ServicioSegundoFactorTest`
 
+Se verifican escenarios como:
+
+- Autenticación con credenciales válidas.
+- Rechazo de credenciales incorrectas.
+- Generación y almacenamiento del código.
+- Validación de códigos correctos.
+- Rechazo de códigos incorrectos.
+- Expiración del código.
+- Reutilización de códigos.
+- Límite de intentos permitidos.
+- Validación de campos vacíos.
+- Rechazo de códigos correspondientes a otro intento.
+
 ### Pruebas funcionales
 
-Se utiliza Selenium WebDriver 4 para verificar el flujo de autenticación desde la interfaz web.
+Se utiliza **Selenium WebDriver 4** para automatizar la interacción con la aplicación web.
 
-**Clase de prueba:**
+Clase de prueba:
+
 - `Flujo2FASeleniumTest`
 
-Se contemplan escenarios como:
+Se comprueban los siguientes escenarios:
+
 - Inicio de sesión con credenciales incorrectas.
 - Rechazo de códigos de verificación incorrectos.
-- Validación del código correcto.
-- Acceso concedido al área protegida.
+- Ejecución del flujo completo de autenticación.
+- Acceso al área protegida después de superar las verificaciones.
 
 ## Estructura del proyecto
 
@@ -71,25 +122,49 @@ Se contemplan escenarios como:
 Projecto-SQA-main/
 │
 ├── src/
+│   │
 │   ├── main/
 │   │   └── java/
 │   │       └── mx/uacm/sqa/twofa/
+│   │           │
 │   │           ├── controller/
+│   │           │   ├── AuthController.java
+│   │           │   └── TwoFactorController.java
+│   │           │
 │   │           ├── dao/
+│   │           │   ├── CodigoVerificacionDAO.java
+│   │           │   ├── CodigoVerificacionDAOEnMemoria.java
+│   │           │   ├── UsuarioDAO.java
+│   │           │   └── UsuarioDAOEnMemoria.java
+│   │           │
 │   │           ├── model/
+│   │           │   ├── CodigoVerificacion.java
+│   │           │   ├── ResultadoValidacion.java
+│   │           │   └── Usuario.java
+│   │           │
 │   │           ├── service/
+│   │           │   ├── ServicioAutenticacion.java
+│   │           │   ├── ServicioCorreo.java
+│   │           │   └── ServicioSegundoFactor.java
+│   │           │
 │   │           └── web/
+│   │               └── ServidorWeb2FA.java
 │   │
 │   └── test/
 │       └── java/
 │           └── mx/uacm/sqa/twofa/
+│               │
 │               ├── ui/
+│               │   └── Flujo2FASeleniumTest.java
+│               │
 │               └── unit/
+│                   ├── ServicioAutenticacionTest.java
+│                   └── ServicioSegundoFactorTest.java
 │
 ├── Proyecto_2FA SQA-E1.pdf
 ├── Proyecto_2FA SQA-E2.pdf
-├── Proyecto_2FA SQA-EFpdf.pdf
 ├── Proyecto_2FASAQ-E3.pdf
+├── Proyecto_2FA SQA-EFpdf.pdf
 │
 ├── pom.xml
 ├── .gitignore
@@ -98,12 +173,12 @@ Projecto-SQA-main/
 
 ## Requisitos del entorno
 
-Para ejecutar el proyecto se requiere:
+Para compilar y ejecutar el proyecto se requiere:
 
 - Java JDK 21.
 - Apache Maven 3.9 o superior.
 - Eclipse IDE o Visual Studio Code.
-- Google Chrome para las pruebas funcionales con Selenium WebDriver.
+- Google Chrome para las pruebas funcionales con Selenium WebDriver 4.
 
 ## Instalación y ejecución
 
@@ -119,7 +194,7 @@ git clone URL_DEL_REPOSITORIO
 cd Projecto-SQA-main
 ```
 
-### 3. Compilar y generar el ejecutable
+### 3. Compilar y empaquetar
 
 ```bash
 mvn clean package
@@ -131,9 +206,9 @@ mvn clean package
 java -jar target/proyecto-2fa-1.0.0.jar
 ```
 
-### 5. Acceder al sistema
+### 5. Abrir el sistema
 
-Abrir el navegador y entrar a:
+En el navegador, ingresar a la siguiente dirección:
 
 ```text
 http://localhost:8080/2fa-app/login
@@ -141,44 +216,52 @@ http://localhost:8080/2fa-app/login
 
 ## Ejecución de pruebas
 
-### Ejecutar pruebas unitarias
+### Ejecutar las pruebas unitarias
 
 ```bash
 mvn test -Dtest=ServicioSegundoFactorTest,ServicioAutenticacionTest
 ```
 
-### Ejecutar pruebas funcionales con Selenium
+### Ejecutar las pruebas funcionales con Selenium
 
 ```bash
 mvn test -Dtest=Flujo2FASeleniumTest
 ```
 
-**Nota:** Para las pruebas funcionales se requiere Google Chrome y un entorno compatible con Selenium WebDriver.
+**Nota:** Las pruebas funcionales requieren Google Chrome y un entorno compatible con Selenium WebDriver.
 
 ## Documentación del proyecto
 
-El repositorio incluye los documentos correspondientes a las diferentes entregas del proyecto:
+El repositorio incluye los documentos correspondientes a las diferentes etapas de desarrollo:
 
-- **SQA-E1:** Primera entrega del proyecto.
-- **SQA-E2:** Segunda entrega del proyecto.
-- **SQA-E3:** Tercera entrega del proyecto.
-- **SQA-Entrega Final:** Documentación de la entrega final.
+| Documento | Contenido |
+|---|---|
+| Proyecto 2FA - SQA Entrega 1 | Organización del proyecto, modelo de desarrollo y estándares de calidad. |
+| Proyecto 2FA - SQA Entrega 2 | Análisis y documentación de requerimientos. |
+| Proyecto 2FA - SQA Entrega 3 | Diseño del sistema y modelado. |
+| Proyecto 2FA - SQA Entrega Final | Implementación, ejecución y resultados del proyecto. |
 
-Los archivos PDF se encuentran disponibles en la raíz del repositorio.
+Los documentos completos se encuentran disponibles en formato PDF en la raíz del repositorio.
 
-## Integrantes
+## Integrantes del equipo
 
 - **Ordaz Reyes Evelyn Julieta** — Scrum Master / QA / Documentación.
 - **Aguirre López Miguel Ángel** — Product Owner / Desarrollo.
 
 
+
+
 **Universidad Autónoma de la Ciudad de México (UACM)**
 
-Proyecto de Aseguramiento de la Calidad de Software (SQA).
+**Plantel:** Cuautepec
+
+**Carrera:** Licenciatura en Ingeniería de Software
+
+**Asignatura:** Aseguramiento de la Calidad de Software (SQA)
 
 ---
 
 <p align="center">
-  <strong>Proyecto 2FA — UACM</strong><br>
+  <strong>PROYECTO 2FA — UACM</strong><br>
   Sistema de Autenticación de Dos Factores
 </p>
